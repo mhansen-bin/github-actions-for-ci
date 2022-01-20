@@ -7,6 +7,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-2016]
+        node-version: [16.x]
     steps:
       - uses: actions/checkout@v2
       - name: npm install and build webpack
@@ -17,14 +21,18 @@ jobs:
         with:
           name: webpack artifacts
           path: public/
-
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
   test:
     needs: build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-2016]
-        node-version: [16.x]
     steps:
     - uses: actions/checkout@v2
     - uses: actions/download-artifact@main
