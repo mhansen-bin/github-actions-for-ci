@@ -45,10 +45,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: npm install and test API
-      run: |
-        npm install
-        newman run https://api.getpostman.com/collections/${POSTMAN_COLLECTION_UID}?apikey=${POSTMAN_API_KEY} --environment https://api.getpostman.com/environments/${POSTMAN_DEV_ENVIRONMENT_UID}?apikey=${POSTMAN_API_KEY}
       env:
         POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
         POSTMAN_COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
         POSTMAN_DEV_ENVIRONMENT_UID: ${{ secrets.POSTMAN_DEV_ENVIRONMENT_UID }}
+      run: |
+        npm install
+        newman run https://api.getpostman.com/collections/${POSTMAN_COLLECTION_UID}?apikey=${POSTMAN_API_KEY} --environment https://api.getpostman.com/environments/${POSTMAN_DEV_ENVIRONMENT_UID}?apikey=${POSTMAN_API_KEY}
+
