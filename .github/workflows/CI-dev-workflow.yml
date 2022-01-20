@@ -35,24 +35,20 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: npm install, and test
-      run: |
-        npm install
+    - name: Testing - Jest
+      run:
         npm test
 
   test_api:
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: npm install and test API
+    - name: Testing API - Newman
       env:
         POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
         POSTMAN_COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
         POSTMAN_DEV_ENVIRONMENT_UID: ${{ secrets.POSTMAN_DEV_ENVIRONMENT_UID }}
-      run: |
-        npm install
-        echo "$POSTMAN_API_KEY"
-        echo "$POSTMAN_COLLECTION_UID"
-        echo "$POSTMAN_DEV_ENVIRONMENT_UID"
+      run:
         newman run https://api.getpostman.com/collections/"$POSTMAN_COLLECTION_UID"?apikey="$POSTMAN_API_KEY" --environment https://api.getpostman.com/environments/"$POSTMAN_DEV_ENVIRONMENT_UID"?apikey="$POSTMAN_API_KEY"
 
