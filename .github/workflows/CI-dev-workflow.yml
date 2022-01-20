@@ -51,5 +51,8 @@ jobs:
         POSTMAN_DEV_ENVIRONMENT_UID: ${{ secrets.POSTMAN_DEV_ENVIRONMENT_UID }}
       run: |
         npm install
+        echo "$POSTMAN_API_KEY"
+        echo "$POSTMAN_COLLECTION_UID"
+        echo "$POSTMAN_DEV_ENVIRONMENT_UID"
         newman run https://api.getpostman.com/collections/"$POSTMAN_COLLECTION_UID"?apikey="$POSTMAN_API_KEY" --environment https://api.getpostman.com/environments/"$POSTMAN_DEV_ENVIRONMENT_UID"?apikey="$POSTMAN_API_KEY"
 
