@@ -8,7 +8,7 @@
     "src": "src"
   },
   "scripts": {
-    "build": "npx webpack --config ./src/webpack.config.js --mode production",
+    "build": "webpack --config ./src/webpack.config.js --mode production",
     "dev": "npx webpack --config ./src/webpack.config.js --mode development --watch",
     "test": "npx standard && npx jest",
     "test:postman:dev:remote": "newman run https://api.getpostman.com/collections/${{ secrets.POSTMAN_COLLECTION_UID }}?apikey=${{ secrets.POSTMAN_API_KEY }} --environment https://api.getpostman.com/environments/${{ secrets.POSTMAN_DEV_ENVIRONMENT_UID }}?apikey=${{ secrets.POSTMAN_API_KEY }}"
