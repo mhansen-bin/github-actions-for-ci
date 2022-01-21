@@ -31,7 +31,8 @@ jobs:
       run: npm ci
 
     - name: Build
-      run:
+      run: |
+        npm ci
         npm run build
 
     - name: Save artifacts
