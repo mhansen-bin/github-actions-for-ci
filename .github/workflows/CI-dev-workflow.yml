@@ -8,20 +8,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
-      - name: npm install and build webpack
-        run: |
-          npm install
-          npm run build
-      - uses: actions/upload-artifact@main
-        with:
-          name: webpack artifacts
-          path: public/
+    - uses: actions/checkout@v2
+
+    - name: Setup Node.js and cache dependencies
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install dependencies
+      if: steps.cache-nodemodules.outputs.cache-hit != 'true'
+      run: npm ci
+
+    - name: Build
+      run: npm build
+
+    - name: Save artifacts
+      uses: actions/upload-artifact@main
+      with:
+        name: webpack artifacts
+        path: public/
 
   test:
     needs: build
@@ -32,9 +39,9 @@ jobs:
       with: 
         name: webpack artifacts
         path: public
+
     - name: Testing - Jest
-      run:
-        npm test
+      run: npm test
 
   test_api:
     needs: build
