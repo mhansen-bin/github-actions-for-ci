@@ -32,7 +32,7 @@ jobs:
 
     - name: Build
       run: 
-        npm run build
+        npx webpack --config ./src/webpack.config.js --mode development
 
     - name: Save artifacts
       uses: actions/upload-artifact@main
