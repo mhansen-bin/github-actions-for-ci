@@ -60,7 +60,7 @@ jobs:
             ${{ runner.os }}-v1-
     - name: Testing - Jest
       run: 
-        npm run test
+        jest
 
   test_api:
     needs: build
