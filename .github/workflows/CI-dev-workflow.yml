@@ -17,14 +17,14 @@ jobs:
       
     - name: Cache dependencies
       id: cache-deps
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
           path: ~/.npm
-          key: ${{ runner.os }}-build-v1-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-build-v2-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-build-v1-${{ env.cache-name }}-
-            ${{ runner.os }}-build-v1-
-            ${{ runner.os }}-v1-
+            ${{ runner.os }}-build-v2-${{ env.cache-name }}-
+            ${{ runner.os }}-build-v2-
+            ${{ runner.os }}-v2-
 
     - name: Install dependencies
       if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -53,11 +53,11 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.npm
-        key: ${{ runner.os }}-build-v1-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-build-v2-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-            ${{ runner.os }}-build-v1-${{ env.cache-name }}-
-            ${{ runner.os }}-build-v1-
-            ${{ runner.os }}-v1-
+            ${{ runner.os }}-build-v2-${{ env.cache-name }}-
+            ${{ runner.os }}-build-v2-
+            ${{ runner.os }}-v2-
     - name: Testing - Jest
       run: |
         npm ci
