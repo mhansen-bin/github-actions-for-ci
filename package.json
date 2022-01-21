@@ -10,8 +10,8 @@
   "scripts": {
     "build": "webpack --config ./src/webpack.config.js --mode production",
     "dev": "webpack --config ./src/webpack.config.js --mode development --watch",
-    "test": "jest",
-    "test:postman:dev:remote": "newman run https://api.getpostman.com/collections/${{ secrets.POSTMAN_COLLECTION_UID }}?apikey=${{ secrets.POSTMAN_API_KEY }} --environment https://api.getpostman.com/environments/${{ secrets.POSTMAN_DEV_ENVIRONMENT_UID }}?apikey=${{ secrets.POSTMAN_API_KEY }}"
+    "test": "standard && jest",
+    "test:postman:dev:remote": "newman run https://api.getpostman.com/collections/${POSTMAN_COLLECTION_UID}?apikey=${POSTMAN_API_KEY} --environment https://api.getpostman.com/environments/${POSTMAN_DEV_ENVIRONMENT_UID}?apikey=${POSTMAN_API_KEY}"
   },
   "author": "githubtraining",
   "license": "MIT",
