@@ -8,36 +8,72 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: npm install and build webpack
-        run: |
-          npm install
-          npm run build
-      - uses: actions/upload-artifact@main
-        with:
-          name: webpack artifacts
-          path: public/
+    - uses: actions/checkout@v2
+
+    - name: Setup Node.js and cache dependencies
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+      
+    - name: Cache dependencies
+      id: cache-deps
+      uses: actions/cache@v2
+      with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-v2-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-v2-${{ env.cache-name }}-
+            ${{ runner.os }}-build-v2-
+            ${{ runner.os }}-v2-
+
+    - name: Install dependencies
+      if: steps.cache-deps.outputs.cache-hit != 'true'
+      run: npm ci
+
+    - name: Build
+      run: |
+        npm ci
+        npm run build
+
+    - name: Save artifacts
+      uses: actions/upload-artifact@main
+      with:
+        name: webpack artifacts
+        path: public/
 
   test:
     needs: build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-2016]
-        node-version: [16.x]
     steps:
     - uses: actions/checkout@v2
     - uses: actions/download-artifact@main
       with: 
         name: webpack artifacts
         path: public
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+    - name: Restore node_modules from cache
+      uses: actions/cache@v1
       with:
-        node-version: ${{ matrix.node-version }}
-    - name: npm install, and test
+        path: ~/.npm
+        key: ${{ runner.os }}-build-v2-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+            ${{ runner.os }}-build-v2-${{ env.cache-name }}-
+            ${{ runner.os }}-build-v2-
+            ${{ runner.os }}-v2-
+    - name: Testing - Jest
       run: |
-        npm install
-        npm test
+        npm ci
+        npm run test
+
+  test_api:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Testing API - Newman
       env:
-        CI: true
+        POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+        POSTMAN_COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
+        POSTMAN_DEV_ENVIRONMENT_UID: ${{ secrets.POSTMAN_DEV_ENVIRONMENT_UID }}
+      run:
+        newman run https://api.getpostman.com/collections/"$POSTMAN_COLLECTION_UID"?apikey="$POSTMAN_API_KEY" --environment https://api.getpostman.com/environments/"$POSTMAN_DEV_ENVIRONMENT_UID"?apikey="$POSTMAN_API_KEY"
+
